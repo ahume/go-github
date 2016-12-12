@@ -175,6 +175,26 @@ func (s *RepositoriesService) ListDeploymentStatuses(owner, repo string, deploym
 	return *statuses, resp, err
 }
 
+// GetDeploymentStatus returns a single deployment status of a repository.
+//
+// GitHub API docs: https://developer.github.com/v3/repos/deployments/#get-a-single-deployment-status
+func (s *RepositoriesService) GetDeploymentStatus(owner, repo string, deploymentID int, deploymentStatusID int) (*DeploymentStatus, *Response, error) {
+	u := fmt.Sprintf("repos/%v/%v/deployments/%v/statuses/%v", owner, repo, deploymentID, deploymentStatusID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	deploymentStatus := new(DeploymentStatus)
+	resp, err := s.client.Do(req, deploymentStatus)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return deploymentStatus, resp, err
+}
+
 // CreateDeploymentStatus creates a new status for a deployment.
 //
 // GitHub API docs: https://developer.github.com/v3/repos/deployments/#create-a-deployment-status
